@@ -1,0 +1,87 @@
+1) Write a Solidity Smart Contract for a Non-Fungible
+Token (NFT) called Virtual Land NFT which signifies a
+Virtual Land in Metaverse.
+
+and =>
+
+
+//SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.17;
+
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract VirtualLandNFT is ERC721Enumerable, Ownable {
+    string private  baseTokenURI;
+
+    mapping (uint256 => string ) private virtualLandDetails;
+
+    event virtualLandDetailsUpdated (uint256 indexed tokenId, string details);
+
+    constructor (string memory _name, string memory _symbol, string memory _baseTokenURI) ERC721 (_name, _symbol) {
+        baseTokenURI = _baseTokenURL;
+    }
+
+    function setBaseTokenURI (string memory _baseTokenURI) external onlyOwner {
+        baseTokenURI = _baseTokenURI;
+    }
+    function mintVirtualLand (address _to, uint256 _tokenID, string memory _details) external onlyOwner {
+        require (_tokenID > 0, "Token ID be greater than 0");
+        require(!_exists(_tokenId),"Token ID already exists");
+
+        _mint (_to, _tokenId);
+        virtualLandDetails[_tokenId] = details;
+
+        emit virtualLandDetailsUpdated(tokenId, _details);
+
+    }
+
+    function updatevirtualLandDetails(uint256 _tokenId, string memory _details) external  {
+        require(_exists (_tokenId), "Token ID Does not exists ");
+        address owner = ownerOf (_tokenId);
+        require (msg.sender == owner || isApprovedorAll (owner, msg.sender ), "Called is not the owner nor approved");
+        virtualLandDetails[_tokenId] = _details;
+
+        emit virtualLandDetailsUpdated(tokenId, details);
+    }
+
+    function getVirtualandDetails(uint256 _tokenId) external view  returns(string memory) {
+        require(_exists(_tokenId),"Token ID Does Not exist");
+        return virtualLandDetails[_tokenId];
+
+    }
+
+    function _baseURI() internal  view  override returns  (string memory) {
+        return baseTokenURI;
+    }
+
+    function uint256String(uint256 value )internal pure returns (string memory) {
+        require(_exists (tokenId), "Token Id does not Exists");
+        return  string(abi.encodepaked(baseTokenURI, uint256toString(_tokenId)));
+
+    }
+    function uint256String(uint256 value) internal pure returns (string memory) {
+        if (value == 0) {
+            return "0";
+        }
+
+        uint256 temp = value;
+        uint256 digits;
+        while (temp != 0) {
+            digits++;
+            temp /= 10;
+        }
+
+        byts memory buffer = new bytes (digits);
+        while (value != 0) {
+            digits != 1;
+            buffer [digits] = bytes1(uint8(48 + uint256 % 10));
+            value /= 10;
+
+        }
+
+        return string(buffer);
+    }
+
+}
